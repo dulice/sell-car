@@ -1,57 +1,54 @@
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { easing } from "maath";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useRef } from "react";
 import { useSnapshot } from "valtio";
 import { state } from "../store";
+import { Context } from "../context/SizeContext";
 
 const Car = () => {
   const snap = useSnapshot(state);
-  const [scale, setScale] = useState(1);
-  const [position, setPosition] = useState([0, 0, 0]);
-  const [rotation, setRotation] = useState([0, 0, 0])
+  const {width} = useContext(Context);
+
   const handleSize = () => {
-    if(window.innerWidth <= 640) {
-      setScale(0.5);
+    if(width <= 640) {
+      state.scale = 0.5;
       if(snap.intro) {
-        setPosition([0, 1, 0]);
-        setRotation([0, (Math.PI/180) * 30, 0])
+        state.position = [0, 1, 0]
+        state.rotation = [0, (Math.PI/180) * 30, 0]
       }else {
-        setPosition([0, 1.5, 0])
-        setRotation([(Math.PI/180) * 10, 0, 0])
+        state.position = [0, 1.5, 0]
+        state.rotation = [(Math.PI/180) * 10, 0, 0]
       }
-    }else if(window.innerWidth <= 768) {
-      setScale(0.7)
+    }else if(width <= 768) {
+      state.scale =0.7
       if(snap.intro) {
-        setPosition([-0.3, 0, 0]);
-        setRotation([0, (Math.PI/180) * 30, 0])
+        state.position = [-0.3, 0, 0]
+        state.rotation = [0, (Math.PI/180) * 30, 0]
       }else {
-        setPosition([0, 1.3, 0])
-        setRotation([(Math.PI/180) * 10, 0, 0])
+        state.position = [0, 1.3, 0]
+        state.rotation = [(Math.PI/180) * 10, 0, 0]
       }
-    }else if(window.innerWidth <= 1024) {
-      setScale(0.8)
+    }else if(width <= 1024) {
+      state.scale =0.8
       if(snap.intro) {
-        setPosition([-0.3, 0, 0]);
-        setRotation([0, (Math.PI/180) * 30, 0])
+        state.position = [-0.3, 0, 0]
+        state.rotation = [0, (Math.PI/180) * 30, 0]
       }else {
-        setPosition([0, 1.3, 0])
-        setRotation([(Math.PI/180) * 10, 0, 0])
+        state.position = [0, 1.3, 0]
+        state.rotation = [(Math.PI/180) * 10, 0, 0]
       }
     }else {
-      setScale(1);
+      state.scale = 1;
       if(snap.intro) {
-        setPosition([0, 0, 0]);
-        setRotation([0, (Math.PI/180) * 30, 0])
+        state.position = [0, 0, 0];
+        state.rotation = [0, (Math.PI/180) * 30, 0]
       }else {
-        setPosition([-1.5, 0, 0])
-        setRotation([0, 0, 0])
+        state.position = [-1.5, 0, 0]
+        state.rotation = [0, 0, 0]
       }
     }
   }
-  useEffect(() => {
-    handleSize();
-  },[snap.intro])
   const carRef = useRef();
   const glb = useGLTF(
     "src/assets/2015_-_porsche_911_carrera_s_rigged__mid-poly.glb"
@@ -59,23 +56,24 @@ const Car = () => {
   useFrame((state, delta) => {
     easing.dampC(glb.materials["Body_Paint_-_Jet_Black"].color, snap.color, 0.25, delta);
     easing.dampC(glb.materials["Body_paint_Jet_black"].color, snap.color, 0.25, delta);
-    easing.damp3(carRef.current.position, position, 0.25, delta);
-    easing.damp3(carRef.current.rotation, rotation, 0.25, delta);
+    easing.damp3(carRef.current.position, snap.position, 0.25, delta);
+    easing.damp3(carRef.current.rotation, snap.rotation, 0.25, delta);
     glb.scene.traverse((child) => {
       if(child.isMesh) {
         child.castShadow = true;
       }
     })
+    handleSize();
   })
 
 
   return (
     <>
-      <group ref={carRef} scale={scale}>
+      <group ref={carRef} scale={snap.scale}>
         <primitive object={glb.scene} castShadow />
         <mesh position={[0,0,0]} rotation={[-Math.PI/2, 0, 0]} receiveShadow>
           <planeGeometry args={[30, 30]} />
-          <meshStandardMaterial color={'#111'}/>
+          <meshStandardMaterial color={'#111'} side={2}/>
         </mesh>
       </group>
     </>

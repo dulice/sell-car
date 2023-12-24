@@ -1,30 +1,14 @@
 import { Center, OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import {useState, useEffect} from 'react'
 import Car from './Car'
 import { useSnapshot } from 'valtio'
 import { state } from '../store'
+import { useContext } from 'react'
+import { Context } from '../context/SizeContext'
 
 const CanvasModal = () => {
-  const snap = useSnapshot(state)
-    const [windowSize, setWindowSize] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight,
-    });
-
-    const handleWindowSize = () => {
-      setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-      })
-    }
-    useEffect(() => {
-
-      window.addEventListener('resize', handleWindowSize)
-    
-      return () => window.removeEventListener('resize', handleWindowSize);
-    }, [])
-    
+  const snap = useSnapshot(state);
+  const windowSize = useContext(Context)
   return (
     <Canvas dpr={[1, 1.5]} camera={{fov: 45}} style={windowSize} shadows>
         <ambientLight intensity={0.5}/>
