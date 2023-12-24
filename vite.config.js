@@ -9,5 +9,6 @@ export default defineConfig({
   },
   build: {
     rollupOptions: ["@react-three/fiber"]
-  }
+  },
+  assetsInclude: ['**/*.glb'],
 })

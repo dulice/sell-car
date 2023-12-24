@@ -5,6 +5,7 @@ import React, { useContext, useRef } from "react";
 import { useSnapshot } from "valtio";
 import { state } from "../store";
 import { Context } from "../context/SizeContext";
+import carScene from '../assets/2015_-_porsche_911_carrera_s_rigged__mid-poly.glb';
 
 const Car = () => {
   const snap = useSnapshot(state);
@@ -50,9 +51,7 @@ const Car = () => {
     }
   }
   const carRef = useRef();
-  const glb = useGLTF(
-    "src/assets/2015_-_porsche_911_carrera_s_rigged__mid-poly.glb"
-  );
+  const glb = useGLTF(carScene);
   useFrame((state, delta) => {
     easing.dampC(glb.materials["Body_Paint_-_Jet_Black"].color, snap.color, 0.25, delta);
     easing.dampC(glb.materials["Body_paint_Jet_black"].color, snap.color, 0.25, delta);
